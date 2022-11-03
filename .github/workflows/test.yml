@@ -1,0 +1,29 @@
+name: Test React App
+on: [push]
+jobs:
+  Basic-testing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Basic Information
+        run: |
+          echo "🎬 The job was automatically triggered by a ${{ github.event_name }} event."
+          echo "💻 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+          echo "🎋 Workflow is running on the branch ${{ github.ref }}"
+      - name: Working Directory
+        run:
+          working-directory: ./docker-react
+      - name: Checking out the repository
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}
+      - name: Information after checking out
+        run: |
+          echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+          echo "🖥️ The workflow is now ready to test your code on the runner."
+      - name: Build image
+        run: |
+          docker build -t docker-react -f Dockerfile.dev .
+      - name: Run container for test
+        run: |
+          docker run docker-react npm run test -- --coverage
+      - run: echo "🍏 This job's status is ${{ job.status }}."
