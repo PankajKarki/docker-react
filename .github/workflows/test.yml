@@ -2,7 +2,7 @@ name: Test React App
 on: [push]
 jobs:
   Basic-testing:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checking out the repository
         uses: actions/checkout@v2
