@@ -10,7 +10,7 @@ jobs:
           echo "💻 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
           echo "🎋 Workflow is running on the branch ${{ github.ref }}"
       - name: Working Directory
-        run:
+        run: |
           working-directory: ./docker-react
       - name: Checking out the repository
         uses: actions/checkout@v2
