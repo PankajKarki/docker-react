@@ -1,7 +1,7 @@
 name: Test React App
 on: [push]
 jobs:
-  Basic-testing:
+  build:
     runs-on: self-hosted
     steps:
       - name: Checking out the repository
@@ -15,3 +15,27 @@ jobs:
         run: |
           docker run -e CI=true docker-react npm run test -- --coverage
       - run: echo "🍏 This job's status is ${{ job.status }}."
+  
+  Deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2 
+      - name: Deploy in EC2
+        env:
+            PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY  }}
+            HOSTNAME : ${{ secrets.HOSTNAME  }}
+            USER_NAME : ${{ secrets.USER_NAME  }}
+            
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+          
+            #Now we have got the access of EC2 and we will start the deploy .
+            cd /home/ubuntu/CounterApp &&
+            git checkout master &&
+            git fetch --all &&
+            git reset --hard origin/master &&
+            git pull origin master &&
+            docker run -p 3000:3000 docker-react
